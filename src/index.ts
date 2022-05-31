@@ -1,11 +1,8 @@
-import { PrismaClient } from '@prisma/client'
+import { Router } from 'express';
+import productRouter from "./routes/ProductRouter";
 
-const prisma = new PrismaClient()
+const routes = Router();
 
-async function main() {
-  // ... your Prisma Client queries will go here
-}
+routes.use('/product', productRouter);
 
-main()
-  .catch((e) => console.error(e))
-  .finally(async () => await prisma.disconnect())
+export default routes;
