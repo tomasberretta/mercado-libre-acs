@@ -16,4 +16,8 @@ export default class ProviderService {
         });
     }
 
+    deleteProviders = async() => {
+        await this.prisma.provider.deleteMany({})
+    }
+
 }

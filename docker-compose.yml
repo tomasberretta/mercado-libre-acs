@@ -1,5 +1,15 @@
 version: '3.7'
 services:
+  mercado-libre-api:
+    image: mercado-libre-api
+    container_name: "mercado-libre-api"
+    depends_on:
+      - postgres
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - '3000:3000'
   postgres:
     image: postgres:10.3
     restart: always

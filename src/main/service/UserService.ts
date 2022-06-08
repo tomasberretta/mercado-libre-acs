@@ -1,4 +1,4 @@
-import {User} from '@prisma/client';
+import {Cart, User} from '@prisma/client';
 
 export default class UserService {
 
@@ -14,6 +14,10 @@ export default class UserService {
                 name: name
             }
         });
+    }
+
+    deleteUsers = async()=>{
+        await this.prisma.user.deleteMany({})
     }
 
 }

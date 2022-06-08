@@ -117,7 +117,7 @@ describe("Test Get Product Description With Stock", () =>{
 
 describe("Test Get Product Description", () =>{
 
-    it("should return product description with: description, name,category,price,information from provider,rating,stock,paying methods", async () => {
+    it("should return product description with: description, name,category,price,information from provider,rating,stock", async () => {
         // @ts-ignore
         const product = await productService.getProduct(product2.id);
         expect(product).toBeDefined()
@@ -134,9 +134,6 @@ describe("Test Get Product Description", () =>{
         expect(product.description.rating).toBe(3);
         // @ts-ignore
         expect(product.stock.stock).toBe(product2.stock.stock);
-        // @ts-ignore
-        expect(product.description.paymentMethods).toBe(product2.description.paymentMethods);
-
 
         // @ts-ignore
         expect(product.stock.stock).toBe(17);

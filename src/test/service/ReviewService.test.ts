@@ -3,6 +3,7 @@ import {Product, Provider} from "@prisma/client";
 import ProductService from "../../main/service/ProductService";
 import UserService from "../../main/service/UserService";
 import ProviderService from "../../main/service/ProviderService";
+import CartService from "../../main/service/CartService";
 const {PrismaClient} = require('@prisma/client');
 const prisma = new PrismaClient();
 const commentService = new ReviewService(prisma);
@@ -16,6 +17,9 @@ let product2:Product;
 let provider:Provider;
 
 beforeAll(async () => {
+
+
+
     provider= await providerService.addProvider("ChairsAndTables");
 
     [product1, product2] = await Promise.all([productService.addProduct("Chair", "Red chair",3,provider.id, "VEHICLES", 2), productService.addProduct("Table", "Blue table",18,provider.id, "VEHICLES", 3)]);

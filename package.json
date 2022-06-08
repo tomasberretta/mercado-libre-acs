@@ -2,9 +2,13 @@
   "name": "mercado-libre-acs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "jest"
+    "build": "tsc",
+    "test": "jest --runInBand",
+    "start": "node dist/app.js",
+    "prestart": "npx prisma generate && npx prisma migrate dev --name init",
+    "pretest": "npx prisma generate && npx prisma migrate dev --name init2"
   },
   "keywords": [],
   "author": "",

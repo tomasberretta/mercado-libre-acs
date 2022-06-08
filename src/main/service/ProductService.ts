@@ -1,4 +1,4 @@
-import {Product} from '@prisma/client';
+import {Product, Price} from '@prisma/client';
 
 export default class ProductService {
 

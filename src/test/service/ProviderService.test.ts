@@ -1,8 +1,14 @@
 import {PrismaClient, Provider} from "@prisma/client";
 import ProviderService from "../../main/service/ProviderService";
 
+
 const prisma = new PrismaClient();
 const providerService = new ProviderService(prisma);
+
+beforeAll(async () => {
+
+
+});
 
 describe("Test Add Provider", () => {
 
