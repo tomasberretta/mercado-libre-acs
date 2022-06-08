@@ -63,4 +63,35 @@ export default class ProductService {
         })
     }
 
+    getCurrentPrice= async (productId: number):Promise<any> =>{
+        const prices= await this.prisma.price.findMany({
+            where:{
+                productId: Number(productId)
+            }
+        });
+
+        prices.sort((a:Price, b:Price) => {
+            return b.date.getTime() - a.date.getTime();
+        });
+
+        return prices[0].price ?? null;
+
+    }
+
+    removeFromStock= async (productId: number):Promise<any> =>{
+        const productInfo= await this.getProduct(productId)
+
+        await this.prisma.stock.update({
+            where:{
+                id: Number(productInfo.stockId),
+            },
+            data:{
+              stock: Number(productInfo.stock.stock-1)
+            }
+        })
+    }
+
+    deleteProducts = async ()=>{
+        await this.prisma.product.deleteMany({})
+    }
 }

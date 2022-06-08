@@ -48,11 +48,32 @@ beforeAll(async () => {
 
 });
 
-describe("Test Get Product Description With No Comments", () => {
+describe("Test Create Cart", () => {
 
-    it("should return product description with rating 0", async () => {
-        expect(0).toBe(0);
+    it("should return empty cart", async () => {
+        const cart = await cartService.createCart(user.id);
+        expect(cart).toBeDefined()
+        // @ts-ignore
+        expect(cart.products.length).toBe(0);
     }
     );
 
 });
+
+describe("Test Add Product To Cart", () => {
+
+    it("should return cart with product", async () => {
+            const cart = await cartService.createCart(user2.id);
+            expect(cart).toBeDefined()
+            // @ts-ignore
+            expect(cart.products.length).toBe(0);
+
+            const updatedCart= await cartService.addProduct(product1.id,cart.id)
+            expect(updatedCart).toBeDefined()
+            // @ts-ignore
+            expect(updatedCart.products.length).toBe(1);
+        }
+    );
+
+});
+

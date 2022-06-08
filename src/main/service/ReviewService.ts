@@ -72,4 +72,8 @@ export default class ReviewService {
         })
     }
 
+    deleteReviews= async (): Promise<any> => {
+        return await this.prisma.review.deleteMany({})
+    }
+
 }

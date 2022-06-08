@@ -26,10 +26,10 @@ model Product {
 }
 
 model ProductDescription {
-  id           Int      @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   description  String
-  product      Product  @relation(fields: [productId], references: [id])
-  rating       Float    @default(0)
+  product      Product        @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  rating       Float          @default(0)
   reviews      Review[]
   payingMethod PayingMethod[]
 
@@ -52,6 +52,7 @@ model User {
   email   String?
   phone   String?
   reviews Review[]
+  cart    Cart?
 }
 
 model Provider {
@@ -94,4 +95,29 @@ enum PayingMethod {
   DEBIT_CARD
   CASH
   MERCADO_PAGO
+}
+
+model CartProduct {
+  id        Int     @id @default(autoincrement())
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cartId    Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  productId Int
+}
+
+model Cart {
+  id             Int           @id @default(autoincrement())
+  products       CartProduct[]
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId         Int           @unique
+  invoiceHistory Invoice[]
+}
+
+model Invoice {
+  id           Int          @id @default(autoincrement())
+  cart         Cart         @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cartId       Int
+  amount       Int
+  payingMethod PayingMethod
+  products     Product[]
 }
