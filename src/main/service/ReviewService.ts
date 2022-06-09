@@ -47,6 +47,9 @@ export default class ReviewService {
             return acc + curr.rating
         },0)
 
+        if(reviews.length==0){
+            return 0;
+        }
         return sum/reviews.length
     }
 
