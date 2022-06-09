@@ -5,6 +5,8 @@ services:
     container_name: "mercado-libre-api"
     depends_on:
       - postgres
+    env_file:
+      - ./.env
     build:
       context: ./
       dockerfile: ./Dockerfile
@@ -12,6 +14,7 @@ services:
       - '3000:3000'
   postgres:
     image: postgres:10.3
+    container_name: "mercado-libre-postgres"
     restart: always
     environment:
       - POSTGRES_USER=postgres

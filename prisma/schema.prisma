@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://johndoe:randompassword@host.docker.internal:5432/mercado-libre-acs?schema=public"
+  url      = env("DATABASE_URL")
 }
 
 model Product {

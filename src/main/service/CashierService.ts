@@ -26,7 +26,6 @@ export default class CashierService {
         let sum = 0;
         const l= p.length;
         for (let i = 0; i < l; i++) {
-            //@ts-ignore
             sum += await productService.getCurrentPrice(p[i].id)
         }
         return sum;

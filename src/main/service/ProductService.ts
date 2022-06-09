@@ -70,11 +70,13 @@ export default class ProductService {
             }
         });
 
+        if (prices.length === 0) throw new Error("Product does not have prices");
+
         prices.sort((a:Price, b:Price) => {
             return b.date.getTime() - a.date.getTime();
         });
 
-        return prices[0].price ?? null;
+        return prices[0].price;
 
     }
 
