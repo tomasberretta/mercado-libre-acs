@@ -61,7 +61,7 @@ jobs:
         run: docker ps -a
 
       - name: Docker inspect
-        run: docker inspect postgres-test
+        run: docker inspect mercado-libre-postgres
 
       - name: Checkout code
         uses: actions/checkout@v2
