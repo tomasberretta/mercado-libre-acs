@@ -1,17 +1,17 @@
 version: '3.7'
 services:
-  mercado-libre-api:
-    image: mercado-libre-api
-    container_name: "mercado-libre-api"
-    depends_on:
-      - postgres
-    env_file:
-      - ./.env
-    build:
-      context: ./
-      dockerfile: ./Dockerfile
-    ports:
-      - '3000:3000'
+#  mercado-libre-api:
+#    image: mercado-libre-api
+#    container_name: "mercado-libre-api"
+#    depends_on:
+#      - postgres
+#    env_file:
+#      - ./.env
+#    build:
+#      context: ./
+#      dockerfile: ./Dockerfile
+#    ports:
+#      - '3000:3000'
   postgres:
     image: postgres:10.3
     container_name: "mercado-libre-postgres"

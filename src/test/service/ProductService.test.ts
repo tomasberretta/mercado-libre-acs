@@ -136,7 +136,6 @@ describe("Test Get Product Description", () =>{
         expect(product.description.rating).toBe(3);
         // @ts-ignore
         expect(product.stock.stock).toBe(product2.stock.stock);
-
         // @ts-ignore
         expect(product.stock.stock).toBe(17);
     });

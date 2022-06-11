@@ -57,12 +57,6 @@ jobs:
       - name: Build the docker-compose stack
         run: docker-compose up -d
 
-      - name: Check running containers
-        run: docker ps -a
-
-      - name: Docker inspect
-        run: docker inspect mercado-libre-postgres
-
       - name: Checkout code
         uses: actions/checkout@v2
 

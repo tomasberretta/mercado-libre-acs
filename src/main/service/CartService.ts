@@ -23,8 +23,8 @@ export default class CartService {
         });
     }
 
-    addProduct = async(productId: number,cartId:number):Promise<Cart>=>{
-        return await this.prisma.cart.update({
+    addProduct = async(productId: number,cartId:number):Promise<void>=>{
+        await this.prisma.cart.update({
             where:{
                 id:Number(cartId)
             },
@@ -61,7 +61,7 @@ export default class CartService {
             select:{
                 products: {
                     select:{
-                        id: true
+                        productId: true
                     }
                 },
             }
@@ -73,6 +73,9 @@ export default class CartService {
             where:{
                 id:Number(cartId)
             },
+            include: {
+                products: true
+            }
         });
     }
 
@@ -82,7 +85,9 @@ export default class CartService {
                 id:Number(cartId)
             },
             data:{
-                products:[]
+                products: {
+                    create:[]
+                }
             }
         });
     }

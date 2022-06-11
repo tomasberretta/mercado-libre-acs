@@ -68,7 +68,8 @@ describe("Test Add Product To Cart", () => {
             // @ts-ignore
             expect(cart.products.length).toBe(0);
 
-            const updatedCart= await cartService.addProduct(product1.id,cart.id)
+            await cartService.addProduct(product1.id,cart.id)
+            const updatedCart = await cartService.getCart(cart.id)
             expect(updatedCart).toBeDefined()
             // @ts-ignore
             expect(updatedCart.products.length).toBe(1);

@@ -93,7 +93,14 @@ export default class ProductService {
         })
     }
 
+    hasStock= async (productId: number):Promise<boolean> =>{
+        const productInfo= await this.getProduct(productId)
+        return productInfo.stock.stock > 0
+    }
+
     deleteProducts = async ()=>{
         await this.prisma.product.deleteMany({})
     }
+
+
 }

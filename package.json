@@ -8,7 +8,7 @@
     "test": "jest --runInBand",
     "start": "node dist/app.js",
     "prestart": "npx prisma generate && npx prisma migrate dev --name init",
-    "pretest": "npx prisma generate && npx prisma migrate dev --name init && npx prisma migrate deploy"
+    "pretest": "npx prisma generate && npx prisma migrate dev --name init && npx prisma migrate deploy && npx prisma migrate reset --force"
   },
   "keywords": [],
   "author": "",

@@ -1,9 +1,9 @@
-// @ts-ignore
 import {Cart, PrismaClient, Product, Review, PayingMethod, Invoice} from "@prisma/client";
 import ProductService from "./ProductService";
 import CartService from "./CartService";
 import MerchantProcessor from "../api/MerchantProcessor";
 import UserService from "./UserService";
+import {log} from "util";
 
 const prisma = new PrismaClient();
 const productService = new ProductService(prisma);
@@ -19,52 +19,84 @@ export default class CashierService {
         this.prisma = prisma;
     }
 
-    getTotal = async (cart: Cart): Promise<number> => {
-        const products = await cartService.getProducts(cart.id);
+    getTotal = async (cartId: number): Promise<number> => {
+        const products = await cartService.getProducts(cartId);
         //@ts-ignore
         const p = products.products
         let sum = 0;
         const l= p.length;
+        if (l === 0) return sum;
         for (let i = 0; i < l; i++) {
-            sum += await productService.getCurrentPrice(p[i].id)
+            sum += await productService.getCurrentPrice(p[i].productId)
         }
         return sum;
     }
 
-    pay= async (cart:Cart, merchantProcessor: MerchantProcessor,payingMethod:PayingMethod): Promise<any> => {
-        //get total
-        const total = await this.getTotal(cart)
+    getStock = async (cartId: number): Promise<boolean> => {
+        const products = await cartService.getProducts(cartId);
+        //@ts-ignore
+        const p = products.products
+        const l= p.length;
 
-        //successful transaction?
-        const valid= merchantProcessor.processPayment(payingMethod,total);
+        if (l === 0) return false;
+        for (let i = 0; i < l; i++) {
 
-        if(valid){
-            //create invoice
-            const invoice= await this.createInvoice(cart,payingMethod,total)
+            if(!(await productService.hasStock(p[i].productId))){
+                return false
+            }
+        }
+        return true;
+    }
 
-            //remove from stock
-            await this.removeProductsFromStock(cart)
-            //remove from cart
-            await this.emptyCart(cart)
+    pay= async (cartId: number, merchantProcessor: MerchantProcessor, payingMethod:PayingMethod): Promise<any> => {
+
+        //check product stock
+        const hasStock = await this.getStock(cartId)
+        if(hasStock){
+
+            //get total
+            const total = await this.getTotal(cartId)
+
+            //successful transaction?
+            const valid= merchantProcessor.processPayment(payingMethod,total);
+
+
+            if(valid){
+                //create invoice
+                const invoice= await this.createInvoice(cartId,payingMethod,total)
+
+                //remove from stock
+                await this.removeProductsFromStock(cartId)
+                //remove from cart
+                await this.emptyCart(cartId)
+
+                return invoice
+            }else{
+                throw new Error("Invalid paying method");
+            }
         }else{
-            return "error:)"
+            throw new Error("No stock available for product");
         }
 
     }
 
-    createInvoice= async (cart: Cart, payingMethod: PayingMethod, amount: number): Promise<Invoice> => {
-        const idProd = await cartService.getProductsId(cart.id)
+    createInvoice= async (cartId: number, payingMethod: PayingMethod, amount: number): Promise<Invoice> => {
+        const idProd = await cartService.getProductsId(cartId)
         return await this.prisma.invoice.create({
             data:{
                 cart:{
                     connect:{
-                        id: Number(cart.id)
+                        id: Number(cartId)
                     }
                 },
                 products:{
-                    connectMany:{
-                        idProd
-                    }
+                    //@ts-ignore
+                    connect: idProd.products.map((ob) => {
+                        return {
+                           id: ob.productId
+                        }
+                    }),
+
                 },
                 amount: amount,
                 payingMethod: payingMethod
@@ -75,19 +107,21 @@ export default class CashierService {
         })
     }
 
-    removeProductsFromStock= async (cart: Cart): Promise<any> =>{
-        const products = await cartService.getProducts(cart.id);
+
+
+    removeProductsFromStock= async (cartId: number): Promise<any> =>{
+        const products = await cartService.getProducts(cartId);
         //@ts-ignore
         const p = products.products;
         const l= p.length;
         for (let i = 0; i < l; i++) {
             //@ts-ignore
-            await productService.removeFromStock(p[i].id)
+            await productService.removeFromStock(p[i].productId)
         }
     }
 
-    emptyCart= async (cart: Cart): Promise<any> =>{
-        await cartService.emptyCart(cart.id);
+    emptyCart= async (cartId: number): Promise<any> =>{
+        await cartService.emptyCart(cartId);
     }
 
 }

@@ -16,11 +16,7 @@ const cartService = new CartService(prisma);
 
 beforeAll(async () => {
 
-    await userService.deleteUsers();
-    await productService.deleteProducts();
-    await reviewService.deleteReviews();
-    await providerService.deleteProviders();
-    await cartService.deleteCarts();
+
 
 });
 

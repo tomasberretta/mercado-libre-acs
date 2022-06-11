@@ -14,6 +14,7 @@ import UserService from "../../main/service/UserService";
 import ProviderService from "../../main/service/ProviderService";
 import CartService from "../../main/service/CartService";
 import ReviewService from "../../main/service/ReviewService";
+import SuccessMerchantProcessor from "../../main/api/SuccessMerchantProcessor";
 
 const prisma = new PrismaClient();
 const cashierService = new CashierService(prisma);
@@ -29,10 +30,14 @@ let product3:Product;
 
 let user:User;
 let user2:User;
+let user3:User;
+
 
 let provider:Provider;
 let emptyCart: Cart;
 let cartWithProducts: Cart;
+let cartToCheckout: Cart;
+
 
 
 
@@ -47,6 +52,7 @@ beforeAll(async () => {
     ]);
     user = await userService.addUser("Joe");
     user2 = await userService.addUser("Mike");
+    user3 = await userService.addUser("Ana");
 
     emptyCart = await cartService.createCart(user.id);
     cartWithProducts = await cartService.createCart(user2.id);
@@ -54,13 +60,17 @@ beforeAll(async () => {
     await cartService.addProduct(product2.id,cartWithProducts.id);
     await cartService.addProduct(product3.id,cartWithProducts.id);
 
+    cartToCheckout = await cartService.createCart(user3.id);
+    await cartService.addProduct(product1.id,cartToCheckout.id);
+    await cartService.addProduct(product2.id,cartToCheckout.id);
+
 });
 
 
 describe("Test Cashier Receives Empty Cart", () => {
 
     it("should return total 0", async () => {
-        const total= await cashierService.getTotal(emptyCart);
+        const total= await cashierService.getTotal(emptyCart.id);
         expect(total).toBeDefined();
         // @ts-ignore
         expect(total).toBe(0);
@@ -71,10 +81,25 @@ describe("Test Cashier Receives Empty Cart", () => {
 describe("Test Cashier Receives Cart with 3 products", () => {
 
     it("should return total sum of prices", async () => {
-        const total= await cashierService.getTotal(cartWithProducts);
+        const total= await cashierService.getTotal(cartWithProducts.id);
         expect(total).toBeDefined();
         // @ts-ignore
         expect(total).toBe(340);
     });
 
+});
+
+describe("Test checkout cart", () => {
+
+    it("should do all things ..." , async() =>{
+        const invoice = await cashierService.pay(cartToCheckout.id, new SuccessMerchantProcessor(),"MERCADO_PAGO")
+        expect(invoice).toBeDefined()
+        expect(invoice.amount).toBe(220)
+
+        // @ts-ignore
+        expect(cartToCheckout.products.length).toBe(0)
+        const updatedProduct = await productService.getProduct(product1.id)
+        // @ts-ignore
+        expect(updatedProduct.stock.stock).toBe(42)
+    });
 });
