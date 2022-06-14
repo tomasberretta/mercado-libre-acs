@@ -1,5 +1,7 @@
-import Product from "../entity/Product";
+import ProductEntity from "../entity/Product";
+import {Product} from "@prisma/client";
 
 export default interface Filter{
-    filter(products: Product[], args:{}): Product[]
+    filterEntity(products: ProductEntity[] , args:{}): ProductEntity[];
+    filter(products: Product[], args:{}): Product[];
 }

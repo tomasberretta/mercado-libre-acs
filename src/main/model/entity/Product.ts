@@ -1,6 +1,6 @@
 import {Category} from "./Category";
 
-export default class Product{
+export default class ProductEntity {
     name : string;
     description : string;
     price : number;

@@ -88,6 +88,7 @@ enum Category {
   BOOKS
   HEALTH
   ELECTRONICS
+  PHONES
 }
 
 enum PayingMethod {

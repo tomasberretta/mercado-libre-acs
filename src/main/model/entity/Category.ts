@@ -9,4 +9,6 @@ export enum Category{
     BOOKS = "BOOKS",
     HEALTH = "HEALTH",
     ELECTRONICS = "ELECTRONICS",
+    PHONES = "PHONES"
 }
+
