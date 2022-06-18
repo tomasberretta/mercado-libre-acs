@@ -1,23 +1,18 @@
 import {Provider} from '@prisma/client';
+import {Context} from "../../resources/Context";
 
 export default class ProviderService {
 
-    prisma: any;
-
-    constructor(prisma: any) {
-        this.prisma = prisma;
-    }
-
-    addProvider = async(name: String):Promise<Provider>=>{
-        return await this.prisma.provider.create({
+    addProvider = async(name: string, context: Context):Promise<Provider>=>{
+        return await context.prisma.provider.create({
             data:{
                 name: name
             }
         });
     }
 
-    deleteProviders = async() => {
-        await this.prisma.provider.deleteMany({})
+    deleteProviders = async(context: Context) => {
+        await context.prisma.provider.deleteMany({})
     }
 
 }

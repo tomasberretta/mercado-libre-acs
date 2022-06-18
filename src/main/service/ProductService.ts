@@ -1,23 +1,31 @@
-import {Product, Price} from '@prisma/client';
+import {Product, Price, Category} from '@prisma/client';
+import {Context} from "../../resources/Context";
+
+export interface CreateProduct {
+    name: string
+    description: string
+    stock: number
+    providerId: number
+    category: Category
+    price: number
+}
 
 export default class ProductService {
 
-    prisma: any;
-
-    constructor(prisma: any) {
-        this.prisma = prisma;
-    }
-
-    getProducts = async (): Promise<Product[]> => {
-        return await this.prisma.product.findMany({
+    getProducts = async (context: Context): Promise<Product[]> => {
+        return await context.prisma.product.findMany({
             orderBy: {
                 id: 'asc',
+            },
+            include: {
+                priceHistory: true,
+                stock: true,
             }
         })
     }
 
-    getProduct= async (productId: number):Promise<any> =>{
-        return await this.prisma.product.findFirst({
+    getProduct= async (productId: number, context: Context):Promise<any> =>{
+        return await context.prisma.product.findFirst({
             where:{
                 id: Number(productId)
             },
@@ -29,30 +37,30 @@ export default class ProductService {
 
     }
 
-    addProduct = async(name:String, description:String, stock: number, providerId: number, category: String, price:number):Promise<Product>=>{
-        return await this.prisma.product.create({
+    addProduct = async(product: CreateProduct, context: Context):Promise<Product>=>{
+        return await context.prisma.product.create({
             data:{
-                name: name,
-                category:category,
+                name: product.name,
+                category: product.category,
                 provider:{
                     connect:{
-                        id: Number(providerId),
+                        id: Number(product.providerId),
                     }
                 },
                 description:{
                     create:{
-                        description: description,
+                        description: product.description,
                     }
                 },
                 stock:{
                    create:{
-                       stock: Number(stock),
+                       stock: Number(product.stock),
                    }
                 },
                 priceHistory:{
                     create:{
                         date: new Date(),
-                        price: price
+                        price: product.price
                     }
                 }
             },
@@ -63,8 +71,8 @@ export default class ProductService {
         })
     }
 
-    getCurrentPrice= async (productId: number):Promise<any> =>{
-        const prices= await this.prisma.price.findMany({
+    getCurrentPrice= async (productId: number, context: Context):Promise<any> =>{
+        const prices= await context.prisma.price.findMany({
             where:{
                 productId: Number(productId)
             }
@@ -80,10 +88,10 @@ export default class ProductService {
 
     }
 
-    removeFromStock= async (productId: number):Promise<any> =>{
-        const productInfo= await this.getProduct(productId)
+    removeFromStock= async (productId: number, context: Context):Promise<any> =>{
+        const productInfo= await this.getProduct(productId, context)
 
-        await this.prisma.stock.update({
+        await context.prisma.stock.update({
             where:{
                 id: Number(productInfo.stockId),
             },
@@ -93,13 +101,13 @@ export default class ProductService {
         })
     }
 
-    hasStock= async (productId: number):Promise<boolean> =>{
-        const productInfo= await this.getProduct(productId)
+    hasStock= async (productId: number, context: Context):Promise<boolean> =>{
+        const productInfo= await this.getProduct(productId, context)
         return productInfo.stock.stock > 0
     }
 
-    deleteProducts = async ()=>{
-        await this.prisma.product.deleteMany({})
+    deleteProducts = async (context: Context)=>{
+        await context.prisma.product.deleteMany({})
     }
 
 

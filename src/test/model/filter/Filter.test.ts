@@ -351,8 +351,8 @@ describe("When Using Name, Category And Price Filter", () => {
         const filteredProducts3 = categoryFilter.filterEntity(filteredProducts2, {category: "TECHNOLOGY"})
 
         expect(filteredProducts3.length).toBe(1)
-        expect(filteredProducts3[0].price).toBeGreaterThan(10)
-        expect(filteredProducts3[0].price).toBeLessThan(2500)
+        expect(filteredProducts3[0].priceHistory[filteredProducts3[0].priceHistory.length-1].price).toBeGreaterThan(10)
+        expect(filteredProducts3[0].priceHistory[filteredProducts3[0].priceHistory.length-1].price).toBeLessThan(2500)
         expect(filteredProducts3[0].category).toBe(Category.TECHNOLOGY)
         expect(filteredProducts3[0].name).toBe(products[8].name)
     });

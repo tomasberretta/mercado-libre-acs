@@ -1,22 +1,32 @@
-import {PrismaClient, Provider} from "@prisma/client";
 import ProviderService from "../../main/service/ProviderService";
+import { MockContext, Context, createMockContext } from '../../resources/Context';
 
+const providerService = new ProviderService();
 
-const prisma = new PrismaClient();
-const providerService = new ProviderService(prisma);
+let mockContext: MockContext
+let context: Context
 
-beforeAll(async () => {
-
-
-});
+beforeEach(() => {
+    mockContext = createMockContext()
+    context = mockContext as unknown as Context
+})
 
 describe("Test Add Provider", () => {
 
     it("should return provider", async () => {
-        const name = "Pepe"
-        const provider : Provider = await providerService.addProvider(name);
+        const name = "ChairsAndTables"
+        const provider = {
+            id: 1,
+            name: name,
+            email: null,
+            phone: null,
+        }
+
+        mockContext.prisma.provider.create.mockResolvedValue(provider)
+
+        await expect(providerService.addProvider(provider.name, context)).resolves.toEqual(provider)
+
         expect(provider).toBeDefined();
-        // @ts-ignore
         expect(provider.name).toBe(name);
     });
 

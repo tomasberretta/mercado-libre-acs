@@ -1,32 +1,38 @@
-import {PrismaClient, User} from "@prisma/client";
 import UserService from "../../main/service/UserService";
-import CashierService from "../../main/service/CashierService";
-import ProductService from "../../main/service/ProductService";
-import ProviderService from "../../main/service/ProviderService";
-import CartService from "../../main/service/CartService";
-import ReviewService from "../../main/service/ReviewService";
+import { MockContext, Context, createMockContext } from '../../resources/Context';
 
-const prisma = new PrismaClient();
-const userService = new UserService(prisma);
-const productService = new ProductService(prisma);
-const reviewService = new ReviewService(prisma);
-const providerService = new ProviderService(prisma);
-const cartService = new CartService(prisma);
+const userService = new UserService();
 
+let mockContext: MockContext
+let context: Context
 
-beforeAll(async () => {
-
-
-
-});
+beforeEach(() => {
+    mockContext = createMockContext()
+    context = mockContext as unknown as Context
+})
 
 describe("Test Add User", () => {
 
+
     it("should return user", async () => {
         const name = "Pepe"
-        const user : User = await userService.addUser(name);
+        const user = {
+            id: 1,
+            name: name,
+            email: null,
+            phone: null,
+        }
+
+        mockContext.prisma.user.create.mockResolvedValue(user)
+
+        await expect(userService.addUser(user, context)).resolves.toEqual({
+            id: 1,
+            name: name,
+            email: null,
+            phone: null,
+        })
+
         expect(user).toBeDefined();
-        // @ts-ignore
         expect(user.name).toBe(name);
     });
 
