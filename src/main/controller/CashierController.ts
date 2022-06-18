@@ -1,19 +1,19 @@
 import CashierService from "../service/CashierService";
 import MerchantProcessor from "../api/MerchantProcessor";
 import {PayingMethod} from "@prisma/client";
-const {PrismaClient} = require('@prisma/client');
-const prisma = new PrismaClient();
-const cashierService = new CashierService(prisma);
+import {Context} from '../../resources/Context';
 
+const cashierService = new CashierService();
 
 export default class CashierController {
 
-    public async checkOut(cartId: number, merchantProcessor: MerchantProcessor, payingMethod: PayingMethod, res: any) {
+    public async checkOut(cartId: number, merchantProcessor: MerchantProcessor, payingMethod: PayingMethod, res: any, context: Context) {
         try {
-            const clinics = await cashierService.pay(cartId,merchantProcessor,payingMethod);
-            return res.status(200).json(clinics);
-        } catch (e) {
-            return res.status(400).json(e);
+            const invoice = await cashierService.checkout(cartId,merchantProcessor,payingMethod, context);
+            return res.status(200).json(invoice);
+        } catch (e: any) {
+            if(e.message !== null) return res.status(400).json({message: e.message});
+            else return res.status(400).json(e);
         }
     }
 }

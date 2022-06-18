@@ -1,38 +1,40 @@
 import {Review} from '@prisma/client';
+import {Context} from "../../resources/Context";
+
+interface CreateReview {
+    comment: string
+    rating: number
+    productDescriptionId:number
+    userId: number
+}
 
 export default class ReviewService {
 
-    prisma: any;
-
-    constructor(prisma: any) {
-        this.prisma = prisma;
-    }
-
-    addReview = async(comment: String, rating: number, productDescriptionId:number, userId: number):Promise<Review>=>{
-        const createdReview = await this.prisma.review.create({
+    addReview = async(review: CreateReview, context: Context):Promise<Review>=>{
+        const createdReview = await context.prisma.review.create({
             data:{
-                comment:comment,
-                rating: rating,
+                comment: review.comment,
+                rating: review.rating,
                 productDescription:{
                     connect:{
-                        id: productDescriptionId
+                        id: review.productDescriptionId
                     }
                 },
                 user:{
                     connect:{
-                        id: userId
+                        id: review.userId
                     }
                 }
             }
         });
 
-        await this.updateRating(productDescriptionId);
+        await this.updateRating(review.productDescriptionId, context);
 
         return createdReview;
     }
 
-    getRating = async(productDescriptionId: number)=>{
-        return await this.prisma.productDescription.findFirst({
+    getRating = async(productDescriptionId: number, context: Context)=>{
+        return await context.prisma.productDescription.findFirst({
             where:{
                 id:Number(productDescriptionId)
             },
@@ -53,8 +55,8 @@ export default class ReviewService {
         return sum/reviews.length
     }
 
-    updateRating = async(productDescriptionId: number)=>{
-        const productDescription= await this.prisma.productDescription.findFirst({
+    updateRating = async(productDescriptionId: number, context: Context)=>{
+        const productDescription = await context.prisma.productDescription.findFirst({
             where:{
                 id:Number(productDescriptionId)
             },
@@ -63,9 +65,10 @@ export default class ReviewService {
             }
         })
 
+        // @ts-ignore
         const newRating = this.calculateRating(productDescription.reviews)
 
-        await this.prisma.productDescription.update({
+        await context.prisma.productDescription.update({
             where:{
                 id:Number(productDescriptionId)
             },
@@ -75,8 +78,8 @@ export default class ReviewService {
         })
     }
 
-    deleteReviews= async (): Promise<any> => {
-        return await this.prisma.review.deleteMany({})
+    deleteReviews= async (context: Context): Promise<any> => {
+        return await context.prisma.review.deleteMany({})
     }
 
 }

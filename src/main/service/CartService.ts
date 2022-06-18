@@ -1,15 +1,10 @@
-import {Cart, Product} from '@prisma/client';
+import {Cart} from '@prisma/client';
+import {Context} from "../../resources/Context";
 
 export default class CartService {
 
-    prisma: any;
-
-    constructor(prisma: any) {
-        this.prisma = prisma;
-    }
-
-    createCart = async(userId: number):Promise<Cart>=>{
-        return await this.prisma.cart.create({
+    createCart = async(userId: number, context: Context):Promise<Cart>=>{
+        return await context.prisma.cart.create({
             data: {
                 user: {
                     connect:{
@@ -23,8 +18,8 @@ export default class CartService {
         });
     }
 
-    addProduct = async(productId: number,cartId:number):Promise<void>=>{
-        await this.prisma.cart.update({
+    addProduct = async(productId: number, cartId:number, context: Context):Promise<void>=>{
+        await context.prisma.cart.update({
             where:{
                 id:Number(cartId)
             },
@@ -41,9 +36,8 @@ export default class CartService {
         });
     }
 
-
-    getProducts = async(cartId: number) : Promise<Product[]> =>{
-        return await this.prisma.cart.findFirst({
+    getProducts = async(cartId: number, context: Context) : Promise<any> =>{
+        return await context.prisma.cart.findFirst({
             where:{
                 id:Number(cartId)
             },
@@ -53,8 +47,8 @@ export default class CartService {
         });
     }
 
-    getProductsId = async(cartId: number) : Promise<number[]> =>{
-        return await this.prisma.cart.findFirst({
+    getProductsId = async(cartId: number, context: Context) : Promise<any> =>{
+        return await context.prisma.cart.findFirst({
             where:{
                 id:Number(cartId)
             },
@@ -68,8 +62,8 @@ export default class CartService {
         });
     }
 
-    getCart = async(cartId: number) : Promise<Cart> =>{
-        return await this.prisma.cart.findFirst({
+    getCart = async(cartId: number, context: Context) : Promise<Cart|null> =>{
+        return await context.prisma.cart.findFirst({
             where:{
                 id:Number(cartId)
             },
@@ -79,8 +73,8 @@ export default class CartService {
         });
     }
 
-    emptyCart = async(cartId: number) : Promise<Cart> =>{
-        return await this.prisma.cart.update({
+    emptyCart = async(cartId: number, context: Context) : Promise<Cart> =>{
+        return await context.prisma.cart.update({
             where:{
                 id:Number(cartId)
             },
@@ -92,8 +86,8 @@ export default class CartService {
         });
     }
 
-    deleteCarts= async (): Promise<any> => {
-        return await this.prisma.cart.deleteMany({})
+    deleteCarts= async (context: Context): Promise<any> => {
+        return await context.prisma.cart.deleteMany({})
     }
 
 }

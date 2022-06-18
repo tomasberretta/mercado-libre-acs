@@ -1,23 +1,20 @@
-import {Cart, User} from '@prisma/client';
+import {User} from '@prisma/client';
+import { Context } from '../../resources/Context';
+
+interface CreateUser {
+    name: string
+}
 
 export default class UserService {
 
-    prisma: any;
-
-    constructor(prisma: any) {
-        this.prisma = prisma;
-    }
-
-    addUser = async(name: String):Promise<User>=>{
-        return await this.prisma.user.create({
-            data:{
-                name: name
-            }
+    addUser = async(user: CreateUser, context: Context):Promise<User>=>{
+        return await context.prisma.user.create({
+            data: user
         });
     }
 
-    deleteUsers = async()=>{
-        await this.prisma.user.deleteMany({})
+    deleteUsers= async (context: Context): Promise<any> => {
+        return await context.prisma.user.deleteMany({})
     }
 
 }
