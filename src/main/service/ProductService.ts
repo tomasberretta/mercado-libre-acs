@@ -6,7 +6,7 @@ export interface CreateProduct {
     description: string
     stock: number
     providerId: number
-    category: Category
+    category: Category | string
     price: number
 }
 
@@ -38,10 +38,17 @@ export default class ProductService {
     }
 
     addProduct = async(product: CreateProduct, context: Context):Promise<Product>=>{
+        let category : Category;
+        if (typeof product.category === "string") {
+            const cat = Object.values(Category).find(c => c === product.category)
+            category = cat ? cat : Category.SUPERMARKETS
+        }else{
+            category = product.category
+        }
         return await context.prisma.product.create({
             data:{
                 name: product.name,
-                category: product.category,
+                category: category,
                 provider:{
                     connect:{
                         id: Number(product.providerId),

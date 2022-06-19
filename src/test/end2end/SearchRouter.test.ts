@@ -171,21 +171,41 @@ describe('GET /search/filter', function() {
         expect(response.body.length).toBe(5);
     });
 
+    it('searches by invalid price range and returns status 400', async function() {
+        const response = await request(app).get('/search/filter?minPrice=600&maxPrice=200').send()
+        expect(response.status).toEqual(400);
+    });
+
+    it('searches by negative price and returns status 400', async function() {
+        const response = await request(app).get('/search/filter?minPrice=-600&maxPrice=200').send()
+        expect(response.status).toEqual(400);
+    });
+
     it('searches by valid category and returns status 200', async function() {
         const response = await request(app).get('/search/filter?category=VEHICLES').send()
         expect(response.status).toEqual(200);
         expect(response.body.length).toBe(3);
     });
 
+    it('searches by invalid category and returns status 400', async function() {
+        const response = await request(app).get('/search/filter?category=WOOD').send()
+        expect(response.status).toEqual(400);
+    });
+
     it('searches by valid name and returns status 200', async function() {
-        const response = await request(app).get('/search/filter?minPrice=10&maxPrice=2500&word=phone&category=PHONES').send()
+        const response = await request(app).get('/search/filter?word=cake').send()
         expect(response.status).toEqual(200);
         expect(response.body.length).toBe(2);
     });
 
     it('searches by valid name, price range, category and returns status 200', async function() {
-        const response = await request(app).get('/search/filter?word=cake').send()
+        const response = await request(app).get('/search/filter?minPrice=10&maxPrice=2500&word=phone&category=PHONES').send()
         expect(response.status).toEqual(200);
         expect(response.body.length).toBe(2);
+    });
+
+    it('searches by invalid name, price range, category and returns status 400', async function() {
+        const response = await request(app).get('/search/filter?minPrice=-10&maxPrice=2500&word=phone&category=WOOD').send()
+        expect(response.status).toEqual(400);
     });
 });
