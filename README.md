@@ -48,7 +48,8 @@ Open http://localhost:8089 to view swarm tests.
 To run Cypress tests, run the following command:
 
 ``` 
-
+npm install cypress
+node_modules/.bin/cypress open
 ```
 
 ### Running Appium
