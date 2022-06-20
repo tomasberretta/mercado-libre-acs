@@ -22,7 +22,7 @@ npm test
 
 ### Running Locust
 
-To run Locust tests, run the following command:
+To run Locust tests, run the following commands:
 
 Stress test:
 ``` 
@@ -55,8 +55,19 @@ To run Cypress tests, run the following command:
 
 ### Running Appium
 
-To run Appium tests, run the following command:
+Requirements:
+- Android SDK
+- Appium-Server
+
+To install Appium-Server, run the following command:
+
+```
+npm install -g appium
+```
+
+To run Appium tests, run the following commands:
 
 ``` 
-
+appium
+ts-node appium/appium.ts
 ```
