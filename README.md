@@ -22,20 +22,22 @@ npm test
 
 ### Running Locust
 
-To run Locust tests, run the following command:
+To run Locust tests, run the following commands:
 
 Stress test:
 ``` 
-dotenv -e .env.test -- ts-node src/test/locust/LocustDBSetter.ts
+sudo docker compose down && sudo docker compose up
+dotenv -e .env.test -- prisma migrate reset --force && dotenv -e .env.test -- ts-node locust/LocustDBSetter.ts
 
 source venv/bin/activate
-locust -f locustfile.py --host=http://localhost:3000 --users=3000 --spawn-rate=100 --autostart --run-time=20s
+locust -f locustfile.py --host=http://localhost:3000 --users=6000 --spawn-rate=100 --autostart --run-time=1m
 ```
 Open http://localhost:8089 to view swarm tests.
 
 Load test:
 ``` 
-dotenv -e .env.test -- ts-node src/test/locust/LocustDBSetter.ts
+sudo docker compose down && sudo docker compose up
+dotenv -e .env.test -- prisma migrate reset --force && dotenv -e .env.test -- ts-node locust/LocustDBSetter.ts
 
 source venv/bin/activate
 locust -f locustfile.py --host=http://localhost:3000 --users=1500 --spawn-rate=10 --autostart --run-time=5m
@@ -54,8 +56,19 @@ node_modules/.bin/cypress open
 
 ### Running Appium
 
-To run Appium tests, run the following command:
+Requirements:
+- Android SDK
+- Appium-Server
+
+To install Appium-Server, run the following command:
+
+```
+npm install -g appium
+```
+
+To run Appium tests, run the following commands:
 
 ``` 
-
+appium
+ts-node appium/appium.ts
 ```
