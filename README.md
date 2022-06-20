@@ -26,16 +26,18 @@ To run Locust tests, run the following commands:
 
 Stress test:
 ``` 
-dotenv -e .env.test -- ts-node src/test/locust/LocustDBSetter.ts
+sudo docker compose down && sudo docker compose up
+dotenv -e .env.test -- prisma migrate reset --force && dotenv -e .env.test -- ts-node locust/LocustDBSetter.ts
 
 source venv/bin/activate
-locust -f locustfile.py --host=http://localhost:3000 --users=3000 --spawn-rate=100 --autostart --run-time=20s
+locust -f locustfile.py --host=http://localhost:3000 --users=6000 --spawn-rate=100 --autostart --run-time=1m
 ```
 Open http://localhost:8089 to view swarm tests.
 
 Load test:
 ``` 
-dotenv -e .env.test -- ts-node src/test/locust/LocustDBSetter.ts
+sudo docker compose down && sudo docker compose up
+dotenv -e .env.test -- prisma migrate reset --force && dotenv -e .env.test -- ts-node locust/LocustDBSetter.ts
 
 source venv/bin/activate
 locust -f locustfile.py --host=http://localhost:3000 --users=1500 --spawn-rate=10 --autostart --run-time=5m

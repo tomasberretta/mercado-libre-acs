@@ -25,13 +25,6 @@ class User(HttpUser):
         )
 
     @task
-    def get_products(self):
-        self.client.get(
-            url=f"/product",
-            name="Get Products"
-        )
-
-    @task
     def get_invoice(self):
         random_id = random.randint(1, 100)
 
